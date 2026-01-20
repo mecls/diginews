@@ -1,11 +1,12 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { Platform, StyleSheet, Text, View } from 'react-native'
+import { ThemedView } from '@/src/components/themed-view'
 import React from 'react'
 
 const profile = () => {
     return (
-        <View>
+        <ThemedView style={{ flex: 1, padding: 32, marginTop: Platform.OS === 'web' ? 48 : 0 }}>
             <Text>profile</Text>
-        </View>
+        </ThemedView>
     )
 }
 

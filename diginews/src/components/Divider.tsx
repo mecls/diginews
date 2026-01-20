@@ -1,16 +1,18 @@
 // Divider.tsx
-import React from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import React from 'react'
+import { View, StyleSheet, Dimensions, ViewStyle } from 'react-native'
+
+const SCREEN_WIDTH = Dimensions.get('window').width
 
 type Props = {
-    color?: string;
-    thickness?: number;
-    marginVertical?: number;
-    style?: ViewStyle;
-};
+    color?: string
+    thickness?: number
+    marginVertical?: number
+    style?: ViewStyle
+}
 
 const Divider: React.FC<Props> = ({
-    color = '#1a1a3b',        // match your nav color
+    color = '#1a1a3b',
     thickness = StyleSheet.hairlineWidth,
     marginVertical = 4,
     style,
@@ -20,23 +22,21 @@ const Divider: React.FC<Props> = ({
             style={[
                 styles.divider,
                 {
+                    width: SCREEN_WIDTH,
                     borderBottomColor: color,
                     borderBottomWidth: thickness,
                     marginVertical,
-                    width: '200%',
-                    alignSelf: 'center',
-                    marginTop: 8,
                 },
                 style,
             ]}
         />
-    );
-};
+    )
+}
 
 const styles = StyleSheet.create({
     divider: {
-        alignSelf: 'stretch',
+        alignSelf: 'center',
     },
-});
+})
 
-export default Divider;
+export default Divider

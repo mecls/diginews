@@ -5,7 +5,7 @@ import { useThemeColor } from '@/src/hooks/use-theme-color';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'unselected';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'unselected' | 'cardTitle' | 'cardContent' | 'cardDate';
 };
 
 export function ThemedText({
@@ -27,6 +27,9 @@ export function ThemedText({
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
         type === 'unselected' ? styles.unselected : undefined,
+        type === 'cardTitle' ? styles.cardTitle : undefined,
+        type === 'cardContent' ? styles.cardContent : undefined,
+        type === 'cardDate' ? styles.cardDate : undefined,
         style,
       ]}
       {...rest}
@@ -63,6 +66,22 @@ const styles = StyleSheet.create({
   unselected: {
     fontSize: 16,
     lineHeight: 24,
+    fontFamily: 'Switzer-Light',
+    color: '#6e6e7e',
+  },
+  cardTitle: {
+    fontSize: 18,
+    lineHeight: 24,
+    fontFamily: 'Switzer-Black',
+  },
+  cardContent: {
+    fontSize: 12,
+    lineHeight: 20,
+    fontFamily: 'Switzer-Regular',
+  },
+  cardDate: {
+    fontSize: 12,
+    lineHeight: 16,
     fontFamily: 'Switzer-Light',
     color: '#6e6e7e',
   },
