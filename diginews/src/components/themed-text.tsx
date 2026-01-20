@@ -5,7 +5,7 @@ import { useThemeColor } from '@/src/hooks/use-theme-color';
 export type ThemedTextProps = TextProps & {
   lightColor?: string;
   darkColor?: string;
-  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link';
+  type?: 'default' | 'title' | 'defaultSemiBold' | 'subtitle' | 'link' | 'unselected';
 };
 
 export function ThemedText({
@@ -26,6 +26,7 @@ export function ThemedText({
         type === 'defaultSemiBold' ? styles.defaultSemiBold : undefined,
         type === 'subtitle' ? styles.subtitle : undefined,
         type === 'link' ? styles.link : undefined,
+        type === 'unselected' ? styles.unselected : undefined,
         style,
       ]}
       {...rest}
@@ -40,7 +41,7 @@ const styles = StyleSheet.create({
     fontFamily: 'Switzer-Regular',
   },
   defaultSemiBold: {
-    fontSize: 16,
+    fontSize: 18,
     lineHeight: 24,
     fontFamily: 'Switzer-Bold',
   },
@@ -58,5 +59,11 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#0a7ea4',
     fontFamily: 'Switzer-Regular',
+  },
+  unselected: {
+    fontSize: 16,
+    lineHeight: 24,
+    fontFamily: 'Switzer-Light',
+    color: '#6e6e7e',
   },
 });
