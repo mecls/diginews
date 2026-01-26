@@ -1,4 +1,4 @@
-import { Tabs } from 'expo-router';
+import { router, Tabs } from 'expo-router';
 import React from 'react';
 import Fontisto from '@expo/vector-icons/Fontisto';
 import { HapticTab } from '@/src/components/haptic-tab';
@@ -7,6 +7,10 @@ import { Colors } from '@/src/constants/theme';
 import { useColorScheme } from '@/src/hooks/use-color-scheme';
 import { useFonts } from 'expo-font';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Ionicons from '@expo/vector-icons/Ionicons';
+import FontAwesome5 from '@expo/vector-icons/build/FontAwesome5';
+import { ThemedText } from '@/src/components/themed-text';
+import { Pressable, View } from 'react-native';
 
 export default function TabLayout() {
   const colorScheme = useColorScheme();
@@ -32,7 +36,6 @@ export default function TabLayout() {
           position: 'absolute',
         }
       }}
-
     >
       <Tabs.Screen
         name="index"
@@ -60,6 +63,19 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
+          headerShown: true,
+          headerShadowVisible: false,
+          headerLeft: () => <Pressable onPress={router.back}><Ionicons name="chevron-back" size={24} color={Colors[colorScheme ?? 'light'].text} style={{ marginLeft: 16 }} /></Pressable>,
+          headerRight: () =>
+            <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}>
+              <FontAwesome5 name="edit" size={18} color="black" />
+              <ThemedText
+                type="defaultSemiBold"
+                style={{ fontSize: 14, marginLeft: 4 }}
+              >
+                Edit
+              </ThemedText>
+            </View>
         }}
       />
     </Tabs>

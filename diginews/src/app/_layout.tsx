@@ -1,14 +1,45 @@
 import { DarkTheme, DefaultTheme, ThemeProvider } from '@react-navigation/native';
-import { Stack } from 'expo-router';
 import { StatusBar } from 'expo-status-bar';
 import 'react-native-reanimated';
 import { useFonts } from 'expo-font';
-
+import { Stack, SplashScreen } from 'expo-router';
+import { AuthProvider, useAuth } from '@/src/providers/AuthProvider';
 import { useColorScheme } from '@/src/hooks/use-color-scheme';
+
+// Prevent splash screen from auto-hiding
+SplashScreen.preventAutoHideAsync();
+
+function SplashScreenController() {
+  const { isLoading } = useAuth();
+
+  if (!isLoading) {
+    SplashScreen.hideAsync();
+  }
+
+  return null;
+}
 
 export const unstable_settings = {
   anchor: '(tabs)',
 };
+
+function RootNavigator() {
+  const { session } = useAuth();
+
+  return (
+    <Stack screenOptions={{ headerShown: false }}>
+      {/* Protected routes - only accessible when authenticated */}
+      <Stack.Protected guard={!!session}>
+        <Stack.Screen name="(tabs)" />
+      </Stack.Protected>
+
+      {/* Public routes - only accessible when NOT authenticated */}
+      <Stack.Protected guard={!session}>
+        <Stack.Screen name="(auth)/login" />
+      </Stack.Protected>
+    </Stack>
+  );
+}
 
 export default function RootLayout() {
   const [fontsLoaded] = useFonts({
@@ -25,10 +56,11 @@ export default function RootLayout() {
 
   return (
     <ThemeProvider value={colorScheme === 'dark' ? DarkTheme : DefaultTheme} >
-      <Stack>
-        <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-      </Stack>
-      <StatusBar style="auto" />
+      <AuthProvider>
+        <SplashScreenController />
+        <RootNavigator />
+        {/* <StatusBar style="auto" /> */}
+      </AuthProvider>
     </ThemeProvider>
   );
 }
