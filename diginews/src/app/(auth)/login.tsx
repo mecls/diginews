@@ -1,86 +1,74 @@
-import React, { useState } from 'react'
-import { Alert, Button, StyleSheet, View } from 'react-native'
-import { supabase } from '@/src/lib/supabase'
-import { Input } from '@rneui/themed'
+import { supabase } from '@/src/lib/supabase';
+import {
+    GoogleSignin,
+    GoogleSigninButton,
+    isErrorWithCode,
+    isSuccessResponse,
+    statusCodes,
+} from '@react-native-google-signin/google-signin';
+import { router } from 'expo-router';
+import { useState } from 'react';
+import { View } from 'react-native';
 
-export default function Auth() {
-    const [email, setEmail] = useState('')
-    const [password, setPassword] = useState('')
-    const [loading, setLoading] = useState(false)
+export default function Login() {
+    const [state, setState] = useState<{ userInfo: any | null }>({ userInfo: null });
 
-    async function signInWithEmail() {
-        setLoading(true)
-        const { error } = await supabase.auth.signInWithPassword({
-            email: email,
-            password: password,
-        })
+    GoogleSignin.configure({
+        webClientId: '665235672767-kp3nle1b9pq2d53knhb7odonuk90kp1k.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
+        scopes: [
+            /* what APIs you want to access on behalf of the user, default is email and profile
+            this is just an example, most likely you don't need this option at all! */
+            'https://www.googleapis.com/auth/drive.readonly',
+        ],
+        iosClientId: '665235672767-5egk0fi2s8glfd0tqapkbaqgag2m1bvr.apps.googleusercontent.com', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
+    });
 
-        if (error) Alert.alert(error.message)
-        setLoading(false)
-    }
+    const signIn = async () => {
+        try {
+            await GoogleSignin.hasPlayServices();
+            const response = await GoogleSignin.signIn();
+            if (isSuccessResponse(response)) {
+                setState({ userInfo: response.data });
+                console.log(response.data);
 
-    async function signUpWithEmail() {
-        setLoading(true)
-        const {
-            data: { session },
-            error,
-        } = await supabase.auth.signUp({
-            email: email,
-            password: password,
-        })
-
-        if (error) Alert.alert(error.message)
-        if (!session) Alert.alert('Please check your inbox for email verification!')
-        setLoading(false)
-    }
+                if (!response.data.idToken) {
+                    const { data, error } = await supabase.auth.signInWithIdToken({
+                        'provider': 'google',
+                        'token': response.data.idToken ?? '',
+                    });
+                    console.log({ data, error });
+                } else { throw new Error('No idToken found') }
+                router.replace('/'); // Redirect to home page after successful login
+            } else {
+                // sign in was cancelled by user
+            }
+        } catch (error) {
+            if (isErrorWithCode(error)) {
+                switch (error.code) {
+                    case statusCodes.IN_PROGRESS:
+                        // operation (eg. sign in) already in progress
+                        break;
+                    case statusCodes.PLAY_SERVICES_NOT_AVAILABLE:
+                        // Android only, play services not available or outdated
+                        break;
+                    default:
+                    // some other error happened
+                }
+            } else {
+                // an error that's not related to google sign in occurred
+            }
+        }
+    };
 
     return (
-        <View style={styles.container}>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-                <Input
-                    label="Email"
-                    leftIcon={{ type: 'font-awesome' }}
-                    onChangeText={(text: any) => setEmail(text)}
-                    value={email}
-                    placeholder="email@address.com"
-                    autoCapitalize={'none'}
-                />
-            </View>
-            <View style={styles.verticallySpaced}>
-                <Input
-                    label="Password"
-                    leftIcon={{ type: 'font-awesome' }}
-                    onChangeText={(text: any) => setPassword(text)}
-                    value={password}
-                    secureTextEntry={true}
-                    placeholder="Password"
-                    autoCapitalize={'none'}
-                />
-            </View>
-            <View style={[styles.verticallySpaced, styles.mt20]}>
-                <Button title="Sign in" disabled={loading} onPress={() => signInWithEmail()} />
-            </View>
-            <View style={styles.verticallySpaced}>
-                <Button title="Sign up" disabled={loading} onPress={() => signUpWithEmail()} />
-            </View>
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+            <GoogleSigninButton
+                size={GoogleSigninButton.Size.Wide}
+                color={GoogleSigninButton.Color.Dark}
+                onPress={() => {
+                    signIn();
+                }}
+            />
         </View>
     )
 }
-
-const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        alignItems: 'flex-start',
-        justifyContent: 'center',
-        marginTop: 40,
-        padding: 12,
-    },
-    verticallySpaced: {
-        paddingTop: 4,
-        paddingBottom: 4,
-        alignSelf: 'stretch',
-    },
-    mt20: {
-        marginTop: 20,
-    },
-})
