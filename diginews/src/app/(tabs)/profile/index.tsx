@@ -1,4 +1,4 @@
-import { Platform, StyleSheet, Text, View, Image, ScrollView } from 'react-native'
+import { Platform, StyleSheet, Text, View, Image, ScrollView, Pressable } from 'react-native'
 import { ThemedView } from '@/src/components/themed-view'
 import React from 'react'
 import { ThemedText } from '@/src/components/themed-text'
@@ -6,6 +6,7 @@ import { IconSymbol } from '@/src/components/ui/icon-symbol'
 import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
+import { router } from 'expo-router'
 const profile = () => {
     return (
         <ScrollView style={{ flex: 1, padding: 32, marginTop: Platform.OS === 'web' ? 48 : 0, backgroundColor: 'white' }} >
@@ -58,16 +59,18 @@ const profile = () => {
                         </View>
                         <IconSymbol size={18} name="chevron.right" color="#888" />
                     </View>
-                    <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomColor: '#eee' }}>
-                        <View style={{ borderColor: 'black', borderWidth: 2, borderRadius: 2, padding: 4 }} >
-                            <Feather name="settings" size={24} color="black" />
+                    <Pressable onPress={() => router.push('/(tabs)/profile/settings/other')}>
+                        <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingVertical: 12, borderBottomColor: '#eee' }}>
+                            <View style={{ borderColor: 'black', borderWidth: 2, borderRadius: 2, padding: 4 }} >
+                                <Feather name="settings" size={24} color="black" />
+                            </View>
+                            <View style={{ flexDirection: 'column', alignContent: 'flex-start', flex: 1, marginLeft: 16 }}>
+                                <ThemedText type='default' style={{ fontSize: 16 }}>Other</ThemedText>
+                                <ThemedText type='cardDate' style={{ fontSize: 12, marginTop: 0 }}>Other app settings</ThemedText>
+                            </View>
+                            <IconSymbol size={18} name="chevron.right" color="#888" />
                         </View>
-                        <View style={{ flexDirection: 'column', alignContent: 'flex-start', flex: 1, marginLeft: 16 }}>
-                            <ThemedText type='default' style={{ fontSize: 16 }}>Other</ThemedText>
-                            <ThemedText type='cardDate' style={{ fontSize: 12, marginTop: 0 }}>Other app settings</ThemedText>
-                        </View>
-                        <IconSymbol size={18} name="chevron.right" color="#888" />
-                    </View>
+                    </Pressable>
                 </View>
             </View>
         </ScrollView>

@@ -63,19 +63,7 @@ export default function TabLayout() {
         options={{
           title: 'Profile',
           tabBarIcon: ({ color }) => <IconSymbol size={28} name="person.fill" color={color} />,
-          headerShown: true,
-          headerShadowVisible: false,
-          headerLeft: () => <Pressable onPress={router.back}><Ionicons name="chevron-back" size={24} color={Colors[colorScheme ?? 'light'].text} style={{ marginLeft: 16 }} /></Pressable>,
-          headerRight: () =>
-            <View style={{ flexDirection: 'row', alignItems: 'center', marginRight: 16 }}>
-              <FontAwesome5 name="edit" size={18} color="black" />
-              <ThemedText
-                type="defaultSemiBold"
-                style={{ fontSize: 14, marginLeft: 4 }}
-              >
-                Edit
-              </ThemedText>
-            </View>
+          headerShown: false,
         }}
       />
     </Tabs>
