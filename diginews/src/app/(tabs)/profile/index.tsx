@@ -7,13 +7,14 @@ import FontAwesome5 from '@expo/vector-icons/FontAwesome5';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Feather from '@expo/vector-icons/Feather';
 import { router } from 'expo-router'
+
 const profile = () => {
     return (
         <ScrollView style={{ flex: 1, padding: 32, marginTop: Platform.OS === 'web' ? 48 : 0, backgroundColor: 'white' }} >
             <View style={{ flex: 1, justifyContent: 'flex-start', alignItems: 'center' }}>
                 <Image source={require('@/assets/images/avatar.jpg')} style={{ width: 100, height: 100, borderRadius: 2, marginBottom: 16, borderWidth: 2, borderColor: 'black' }} />
-                <ThemedText type='title' style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 4 }}>John Doe</ThemedText>
-                <ThemedText type='unselected' style={{ fontSize: 16, color: '#666' }} >@john_doe</ThemedText>
+                <ThemedText type='title' style={{ fontSize: 24, fontWeight: 'bold', marginBottom: 4 }}>First Name</ThemedText>
+                <ThemedText type='unselected' style={{ fontSize: 16, color: '#666' }} >@user_name</ThemedText>
             </View>
             <View style={{ flex: 2, marginTop: 32 }}>
                 <ThemedText type='default' style={{ fontSize: 20, fontWeight: 'bold', marginBottom: 8 }}>Account Settings</ThemedText>
