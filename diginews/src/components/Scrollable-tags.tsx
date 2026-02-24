@@ -1,22 +1,34 @@
-import { StyleSheet, Text, View, ScrollView, Pressable } from 'react-native'
+import { StyleSheet, View, ScrollView, Pressable } from 'react-native'
 import React, { useState } from 'react'
 import Divider from './Divider'
 import { ThemedText } from './themed-text'
 
 const tags = ['All', 'Business', 'Technology', 'Entertainment', 'Sports', 'Health', 'Science']
 
-const ScrollableTags = () => {
+type Props = {
+    value?: string;
+    onChange?: (tag: string) => void;
+}
+
+const ScrollableTags = ({ value, onChange }: Props) => {
     const [selectedTag, setSelectedTag] = useState('All');
+    const effectiveTag = value ?? selectedTag
 
     return (
         <View>
             <Divider />
             <ScrollView horizontal showsHorizontalScrollIndicator={false} style={{ marginVertical: 8 }}>
                 {tags.map((tag, index) => (
-                    <Pressable key={index} onPress={() => setSelectedTag(tag)}>
+                    <Pressable
+                        key={index}
+                        onPress={() => {
+                            setSelectedTag(tag)
+                            onChange?.(tag)
+                        }}
+                    >
                         <ThemedText
                             key={index}
-                            type={selectedTag === tag ? 'defaultSemiBold' : 'unselected'}
+                            type={effectiveTag === tag ? 'defaultSemiBold' : 'unselected'}
                             style={{ marginRight: 16 }}
                         >
                             {tag.toUpperCase()}

@@ -33,8 +33,8 @@ const profile = () => {
                         <FontAwesome5 name="newspaper" size={24} color="black" />
                     </View>
                     <View style={{ flexDirection: 'column', alignContent: 'flex-start', flex: 1, marginLeft: 16 }}>
-                        <ThemedText type='default' style={{ fontSize: 16, flex: 1 }}>Newsletters</ThemedText>
-                        <ThemedText type='cardDate' style={{ fontSize: 12, marginTop: 0 }}>Configure your newsletter preferences</ThemedText>
+                        <ThemedText type='default' style={{ fontSize: 16, flex: 1 }}>Sources</ThemedText>
+                        <ThemedText type='cardDate' style={{ fontSize: 12, marginTop: 0 }}>Choose sources and topics you follow</ThemedText>
                     </View>
                     <IconSymbol size={18} name="chevron.right" color="#888" />
                 </View>

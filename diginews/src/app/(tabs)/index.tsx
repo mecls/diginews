@@ -1,20 +1,53 @@
-import { Image } from 'expo-image';
-import { Platform, StyleSheet, View, ScrollView } from 'react-native';
+import { Platform, StyleSheet, View, ScrollView, ActivityIndicator, Pressable } from 'react-native';
 
 import { ThemedText } from '@/src/components/themed-text';
 import { ThemedView } from '@/src/components/themed-view';
-import { Link } from 'expo-router';
 import ScrollableTags from '@/src/components/Scrollable-tags';
-import NewsLetterCardTop from '@/src/components/NewsLetterCardTop';
-import NewsLetterCard from '@/src/components/NewsLetterCard';
+import ArticleCard from '@/src/components/ArticleCard';
+import ArticleCardTop from '@/src/components/ArticleCardTop';
+import { useEffect, useMemo, useState } from 'react';
+import { listArticles, sourceNameFromEmbeddedNewsSources, type Article } from '@/src/services/news';
+import * as WebBrowser from 'expo-web-browser';
 export default function HomeScreen() {
+  const [tag, setTag] = useState('All');
+  const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [articles, setArticles] = useState<Article[]>([]);
+
+  useEffect(() => {
+    let isMounted = true;
+    (async () => {
+      setIsLoading(true);
+      setError(null);
+      const { data, error } = await listArticles({ category: tag, limit: 30 });
+      if (!isMounted) return;
+      if (error) {
+        setError(error.message);
+        setArticles([]);
+      } else {
+        const mapped = ((data ?? []) as any[]).map((a) => ({
+          ...a,
+          source_name: sourceNameFromEmbeddedNewsSources(a.news_sources),
+        })) as Article[];
+        setArticles(mapped);
+      }
+      setIsLoading(false);
+    })();
+    return () => {
+      isMounted = false;
+    };
+  }, [tag]);
+
+  const hero = articles[0];
+  const rest = useMemo(() => articles.slice(1), [articles]);
+
   return (
     <ThemedView style={{ flex: 1, padding: 32, marginTop: Platform.OS === 'web' ? 48 : 0 }}>
       <View style={styles.stepContainer}>
         <ThemedText type="title" style={styles.titleContainer}>
           DIGINEWS
         </ThemedText>
-        <ScrollableTags />
+        <ScrollableTags value={tag} onChange={setTag} />
         <ScrollView
           showsVerticalScrollIndicator={false}
           contentContainerStyle={{
@@ -23,22 +56,45 @@ export default function HomeScreen() {
             gap: 24,
           }}
         >
-          <NewsLetterCardTop
-            title="The AI revolution is here. Will the economy survive the transition?"
-            content="The man who predicted the 2008 crash, Anthropic’s co-founder, and..."
-            imageUrl={require('@/assets/images/news-feed-preview.jpg')}
-            date="12 Jun, 2024"
-            bookmarked={false}
-          />
+          {isLoading ? (
+            <View style={{ paddingVertical: 32 }}>
+              <ActivityIndicator />
+            </View>
+          ) : error ? (
+            <ThemedText type="default">{error}</ThemedText>
+          ) : articles.length === 0 ? (
+            <ThemedText type="default">No articles yet. Ingestion should populate this soon.</ThemedText>
+          ) : (
+            <>
+              {hero ? (
+                <ArticleCardTop
+                  sourceName={hero.source_name ?? ''}
+                  title={hero.title}
+                  content={hero.summary ?? ''}
+                  imageUrl={hero.image_url ? { uri: hero.image_url } : null}
+                  date={hero.published_at ? new Date(hero.published_at).toLocaleDateString() : ''}
+                  bookmarked={false}
+                  onPress={() => {
+                    WebBrowser.openBrowserAsync(hero.canonical_url)
+                  }}
+                />
+              ) : null}
 
-          <NewsLetterCard
-            title="Maduro in Minneapolis"
-            content="Murderous Lies..."
-            imageUrl={require('@/assets/images/secondimg.jpg')}
-            layout="banner"
-            date="12 Jun, 2024"
-            bookmarked={false}
-          />
+              {rest.map((a) => (
+                <ArticleCard
+                  key={a.id}
+                  sourceName={a.source_name ?? ''}
+                  title={a.title}
+                  content={a.summary ?? ''}
+                  imageUrl={a.image_url ? { uri: a.image_url } : null}
+                  layout="thumbnail"
+                  date={a.published_at ? new Date(a.published_at).toLocaleDateString() : ''}
+                  bookmarked={false}
+                  onPress={() => WebBrowser.openBrowserAsync(a.canonical_url)}
+                />
+              ))}
+            </>
+          )}
         </ScrollView>
 
       </View>

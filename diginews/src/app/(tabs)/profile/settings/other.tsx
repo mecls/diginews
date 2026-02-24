@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 import { useAuth } from '@/src/providers/AuthProvider'
 
-const other = () => {
+const Other = () => {
     const { signOut } = useAuth()
     return (
         <View>
@@ -11,7 +11,7 @@ const other = () => {
     )
 }
 
-export default other
+export default Other
 
 const styles = StyleSheet.create({
     signOut: {

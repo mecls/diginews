@@ -2,12 +2,12 @@ import { StyleSheet, View, Image, Pressable } from 'react-native'
 import React, { useState } from 'react'
 import { ThemedView } from './themed-view';
 import { ThemedText } from './themed-text';
-import Divider from './Divider';
 import FontAwesome from '@expo/vector-icons/build/FontAwesome';
 
 type LayoutType = 'thumbnail' | 'banner' | 'full';
 
 type Props = {
+    sourceName?: string;
     title: string;
     content: string;
     imageUrl: any;
@@ -19,9 +19,11 @@ type Props = {
     onSharePress?: () => void;
 }
 
-const NewsLetterCard = (props: Props) => {
+const ArticleCard = (props: Props) => {
     const [isBookmarked, setIsBookmarked] = useState(props.bookmarked);
     const layout = props.layout || 'thumbnail';
+    const [imageError, setImageError] = useState(false)
+    const hasImage = !!props.imageUrl && !imageError
 
     const handleBookmark = () => {
         setIsBookmarked(!isBookmarked);
@@ -35,16 +37,24 @@ const NewsLetterCard = (props: Props) => {
                 return (
                     <View style={styles.bannerContainer}>
                         {/* Banner image at top */}
-                        <View style={styles.bannerImageWrapper}>
-                            <View style={styles.bannerShadow} />
-                            <Image
-                                source={props.imageUrl}
-                                style={styles.bannerImage}
-                            />
-                        </View>
+                        {hasImage ? (
+                            <View style={styles.bannerImageWrapper}>
+                                <View style={styles.bannerShadow} />
+                                <Image
+                                    source={props.imageUrl}
+                                    style={styles.bannerImage}
+                                    onError={() => setImageError(true)}
+                                />
+                            </View>
+                        ) : null}
 
                         {/* Text below */}
                         <View style={styles.bannerTextContainer}>
+                            {props.sourceName ? (
+                                <ThemedText type="cardDate" style={styles.sourcePill}>
+                                    {props.sourceName.toUpperCase()}
+                                </ThemedText>
+                            ) : null}
                             <ThemedText type="cardTitle" numberOfLines={2}>
                                 {props.title}
                             </ThemedText>
@@ -59,13 +69,21 @@ const NewsLetterCard = (props: Props) => {
                 return (
                     <View style={styles.fullContainer}>
                         {/* Full width image */}
-                        <Image
-                            source={props.imageUrl}
-                            style={styles.fullImage}
-                        />
+                        {hasImage ? (
+                            <Image
+                                source={props.imageUrl}
+                                style={styles.fullImage}
+                                onError={() => setImageError(true)}
+                            />
+                        ) : null}
 
                         {/* Overlaid or below text */}
                         <View style={styles.fullTextContainer}>
+                            {props.sourceName ? (
+                                <ThemedText type="cardDate" style={styles.sourcePill}>
+                                    {props.sourceName.toUpperCase()}
+                                </ThemedText>
+                            ) : null}
                             <ThemedText type="cardTitle" numberOfLines={2}>
                                 {props.title}
                             </ThemedText>
@@ -82,6 +100,11 @@ const NewsLetterCard = (props: Props) => {
                     <View style={styles.thumbnailContainer}>
                         {/* Text on left */}
                         <View style={styles.thumbnailTextContainer}>
+                            {props.sourceName ? (
+                                <ThemedText type="cardDate" style={styles.sourcePill}>
+                                    {props.sourceName.toUpperCase()}
+                                </ThemedText>
+                            ) : null}
                             <ThemedText type="cardTitle" numberOfLines={2}>
                                 {props.title}
                             </ThemedText>
@@ -91,13 +114,16 @@ const NewsLetterCard = (props: Props) => {
                         </View>
 
                         {/* Thumbnail on right */}
-                        <View style={styles.thumbnailImageWrapper}>
-                            <View style={styles.thumbnailShadow} />
-                            <Image
-                                source={props.imageUrl}
-                                style={styles.thumbnailImage}
-                            />
-                        </View>
+                        {hasImage ? (
+                            <View style={styles.thumbnailImageWrapper}>
+                                <View style={styles.thumbnailShadow} />
+                                <Image
+                                    source={props.imageUrl}
+                                    style={styles.thumbnailImage}
+                                    onError={() => setImageError(true)}
+                                />
+                            </View>
+                        ) : null}
                     </View>
                 );
         }
@@ -164,6 +190,17 @@ const styles = StyleSheet.create({
     },
     thumbnailTextContainer: {
         flex: 1,
+    },
+    sourcePill: {
+        alignSelf: 'flex-start',
+        borderWidth: 1,
+        borderColor: '#000',
+        paddingHorizontal: 8,
+        paddingVertical: 2,
+        borderRadius: 999,
+        fontSize: 10,
+        opacity: 0.75,
+        marginBottom: 6,
     },
     thumbnailImageWrapper: {
         position: 'relative',
@@ -255,4 +292,5 @@ const styles = StyleSheet.create({
     },
 })
 
-export default NewsLetterCard
+export default ArticleCard
+

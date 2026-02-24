@@ -80,7 +80,7 @@ export default function AuthScreen() {
                     <View style={styles.header}>
                         <Text style={styles.title}>WELCOME</Text>
                         <Text style={styles.subtitle}>
-                            Please sign in there are news coming out{'\n'}and they won't wait for you!
+                            Please sign in there are news coming out{'\n'}and they won&apos;t wait for you!
                         </Text>
                     </View>
 

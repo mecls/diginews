@@ -1,9 +1,7 @@
-import { createContext, useContext, useEffect, useState, type PropsWithChildren } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { Session } from '@supabase/supabase-js';
-import { Alert, AppState } from 'react-native';
-import * as WebBrowser from 'expo-web-browser';
+import { AppState } from 'react-native';
 import { supabase } from '@/src/lib/supabase';
-import { makeRedirectUri } from 'expo-auth-session';
 import {
     GoogleSignin,
     isErrorWithCode,
@@ -37,11 +35,6 @@ AppState.addEventListener('change', (state) => {
 });
 GoogleSignin.configure({
     webClientId: '665235672767-kp3nle1b9pq2d53knhb7odonuk90kp1k.apps.googleusercontent.com', // client ID of type WEB for your server. Required to get the `idToken` on the user object, and for offline access.
-    scopes: [
-        /* what APIs you want to access on behalf of the user, default is email and profile
-        this is just an example, most likely you don't need this option at all! */
-        'https://www.googleapis.com/auth/drive.readonly',
-    ],
     iosClientId: '665235672767-5egk0fi2s8glfd0tqapkbaqgag2m1bvr.apps.googleusercontent.com', // [iOS] if you want to specify the client ID of type iOS (otherwise, it is taken from GoogleService-Info.plist)
 });
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
@@ -61,19 +54,6 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 console.log('Auth event:', event);
                 setSession(session);
                 setIsLoading(false);
-
-                if (event === 'SIGNED_IN' && session) {
-                    const { provider_token, provider_refresh_token } = session;
-
-                    if (provider_refresh_token) {
-                        await supabase.from('user_tokens').upsert({
-                            user_id: session.user.id,
-                            provider_token,
-                            provider_refresh_token,
-                            updated_at: new Date().toISOString(),
-                        });
-                    }
-                }
             }
         );
 
